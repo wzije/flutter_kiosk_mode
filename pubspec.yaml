@@ -1,10 +1,10 @@
 name: flutter_kiosk_mode
 description: Flutter Kiosk mode on Android application
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/prongbang/flutter_kiosk_mode.git
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.12.0 <4.0.0"
   flutter: ">=2.5.0"
 
 dependencies:
