@@ -38,7 +38,14 @@ class _MyAppState extends State<MyApp> {
               const SizedBox(height: 50),
               ElevatedButton(
                 onPressed: () async {
-                  await _flutterKioskModePlugin.start();
+                  final result = await _flutterKioskModePlugin.start();
+                  Future.delayed(const Duration(milliseconds: 1000), () async {
+                    final bool pinned = await _flutterKioskModePlugin.check();
+                    if (!pinned && mounted && context.mounted) {
+                      print("back");
+                      Navigator.pop(context);
+                    }
+                  });
                 },
                 child: const Text('Start Kiosk'),
               ),
