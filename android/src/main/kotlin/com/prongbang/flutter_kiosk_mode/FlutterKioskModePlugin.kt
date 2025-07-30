@@ -45,13 +45,7 @@ class FlutterKioskModePlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "start" -> startKiosk(result)
             "stop" -> stopKiosk(result)
             "owner" -> ownerApp(result)
-            "check" -> {
-                val isKiosk = isInLockTaskMode()
-                val msg =
-                    if (isKiosk) "App is currently in kiosk mode" else "App is not in kiosk mode"
-                result.success(mapOf("status" to isKiosk, "message" to msg))
-            }
-
+            "check" -> result.success(isInLockTaskMode())
             else -> result.notImplemented()
         }
     }
