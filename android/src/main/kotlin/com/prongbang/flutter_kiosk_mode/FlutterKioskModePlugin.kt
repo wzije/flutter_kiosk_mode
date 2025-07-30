@@ -1,10 +1,13 @@
 package com.prongbang.flutter_kiosk_mode
 
+import AndroidDeviceAdminReceiver
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.ActivityManager
+import android.content.Context
+import android.os.Build
 import android.util.Log
 import androidx.annotation.NonNull
-import com.prongbang.kiosk.AndroidDeviceAdminReceiver
-import com.prongbang.kiosk.AndroidDevicePolicyManager
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -25,12 +28,30 @@ class FlutterKioskModePlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         channel.setMethodCallHandler(this)
     }
 
+    @SuppressLint("ObsoleteSdkInt")
+    private fun isInLockTaskMode(): Boolean {
+        val am = activity?.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            am.lockTaskModeState != ActivityManager.LOCK_TASK_MODE_NONE
+        } else {
+            @Suppress("DEPRECATION")
+            am.isInLockTaskMode
+        }
+    }
+
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         Log.i("", "call.method: ${call.method}")
         when (call.method) {
             "start" -> startKiosk(result)
             "stop" -> stopKiosk(result)
             "owner" -> ownerApp(result)
+            "check" -> {
+                val isKiosk = isInLockTaskMode()
+                val msg =
+                    if (isKiosk) "App is currently in kiosk mode" else "App is not in kiosk mode"
+                result.success(mapOf("status" to isKiosk, "message" to msg))
+            }
+
             else -> result.notImplemented()
         }
     }

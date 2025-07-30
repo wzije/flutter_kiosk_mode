@@ -7,5 +7,7 @@ abstract class FlutterKioskMode {
 
   Future<bool> owner();
 
+  Future<bool> check();
+
   factory FlutterKioskMode.instance() => MethodChannelFlutterKioskMode();
 }

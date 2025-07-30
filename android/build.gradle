@@ -1,57 +1,76 @@
-group 'com.prongbang.flutter_kiosk_mode'
-version '1.0-SNAPSHOT'
-
 buildscript {
-    ext.kotlin_version = '1.6.10'
+    ext.kotlin_version = '2.1.0'
     repositories {
         google()
         mavenCentral()
         maven { url 'https://jitpack.io' }
     }
-
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.1.2'
+        classpath 'com.android.tools.build:gradle:8.1.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
-rootProject.allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        maven { url 'https://jitpack.io' }
     }
 }
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
-android {
-    if (project.android.hasProperty("namespace")) {
-        namespace 'com.prongbang.flutter_kiosk_mode'
-    }
+group 'com.prongbang.flutter_kiosk_mode'
+version '1.0-SNAPSHOT'
 
-    compileSdkVersion 33
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-    }
-
-    defaultConfig {
-        minSdkVersion 21
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
     }
 }
 
+subprojects {
+    afterEvaluate {
+        tasks.withType(JavaCompile).configureEach {
+            options.release.set(17)
+        }
+    }
+}
+
+android {
+    namespace "com.prongbang.flutter_kiosk_mode"
+    compileSdkVersion 33
+
+    defaultConfig {
+        minSdkVersion 23
+        targetSdkVersion 33
+    }
+
+    sourceSets {
+        main {
+            java.srcDirs += 'src/main/kotlin'
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(17))
+        }
+    }
+}
+
+//def flutterRoot = "${rootDir}/../../flutter_kiosk_mode/.fvm/flutter_sdk"
+//def flutterJar = file("$flutterRoot/bin/cache/artifacts/engine/android-arm64/flutter.jar")
+
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.github.prongbang:kiosk-mode:1.0.4'
+    implementation 'androidx.annotation:annotation:1.2.0'
+    implementation "androidx.core:core-ktx:1.7.0"
+//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+//    compileOnly files(flutterJar)
 }

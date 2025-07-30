@@ -21,4 +21,9 @@ class MethodChannelFlutterKioskMode implements FlutterKioskMode {
   Future<bool> stop() async {
     return await methodChannel.invokeMethod<bool>('stop') ?? false;
   }
+
+  @override
+  Future<bool> check() async {
+    return await methodChannel.invokeMethod<bool>('check') ?? false;
+  }
 }
